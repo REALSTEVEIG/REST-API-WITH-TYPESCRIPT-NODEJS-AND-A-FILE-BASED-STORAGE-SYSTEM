@@ -1,43 +1,28 @@
 import { Product, Products, UnitProduct } from "./product.interface";
-import {v4 as random} from "uuid"
+import { v4 as random } from "uuid";
+import fs from "fs";
 
-let products : Products = {
-    "a" : {
-        id : "a",
-        name : "Shoes",
-        price : 100,
-        quantity : 400,
-        image : "image1/url"
-    },
-    "b" : {
-        id : "b",
-        name : "Bags",
-        price : 50,
-        quantity : 700,
-        image : "image2/url"
-    },
-    "c" : {
-        id : "c",
-        name : "Shirts",
-        price : 70,
-        quantity : 420,
-        image : "image3/url"
-    },
-    "d" : {
-        id : "d",
-        name : "Shorts",
-        price : 82,
-        quantity : 900,
-        image : "image4/url"
-    },
-    "e" : {
-        id : "e",
-        name : "Gowns",
-        price : 111,
-        quantity : 4000,
-        image : "image4/url"
+let products: Products = loadProducts();
+
+function loadProducts(): Products {
+  try {
+    const data = fs.readFileSync("./products.json", "utf-8");
+    return JSON.parse(data);
+  } catch (error) {
+    console.log("Error", error);
+    return {};
+  }
+}
+
+function saveProducts() {
+    try {
+        fs.writeFileSync("./products.json", JSON.stringify(products), "utf-8");
+        console.log("Products saved successfully!")
+    } catch (error) {
+        console.log("Error", error)
     }
 }
+
 
 export const findAll = async () : Promise<UnitProduct[]> => Object.values(products)
 
@@ -59,6 +44,8 @@ export const create = async (productInfo : Product) : Promise<null | UnitProduct
         ...productInfo
     }
 
+    saveProducts()
+
     return products[id]
 }
 
@@ -75,6 +62,8 @@ export const update = async (id : string, updateValues : Product) : Promise<Unit
         ...updateValues
     }
 
+    saveProducts()
+
     return products[id]
 }
 
@@ -87,5 +76,7 @@ export const remove = async (id : string) : Promise<null | void> => {
     }
 
     delete products[id]
+
+    saveProducts()
 
 }
