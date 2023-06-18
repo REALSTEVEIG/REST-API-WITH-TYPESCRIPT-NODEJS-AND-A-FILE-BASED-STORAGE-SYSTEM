@@ -9,7 +9,7 @@ function loadProducts(): Products {
     const data = fs.readFileSync("./products.json", "utf-8");
     return JSON.parse(data);
   } catch (error) {
-    console.log("Error", error);
+    console.log(`Error ${error}`);
     return {};
   }
 }
